@@ -1,16 +1,84 @@
 import { Video as VideoBase, VideoProps } from "@designcombo/timeline";
 
 class Video extends VideoBase {
+  private placeholderImage: HTMLImageElement | null = null;
+  private imageLoaded = false;
   static type = "Video";
   constructor(props: VideoProps) {
     super(props);
     // this.fill = "#2563eb";
+    this.loadPlaceholderImage();
   }
 
   public _render(ctx: CanvasRenderingContext2D) {
     super._render(ctx);
+    this.drawPlaceholder(ctx);
     this.drawTextIdentity(ctx);
     this.updateSelected(ctx);
+  }
+
+  private loadPlaceholderImage() {
+    this.placeholderImage = new Image();
+    this.placeholderImage.crossOrigin = "Anonymous";
+    this.placeholderImage.src =
+      "https://thumbs.dreamstime.com/b/no-thumbnail-images-placeholder-forums-blogs-websites-148010338.jpg";
+    this.placeholderImage.onload = () => {
+      this.imageLoaded = true;
+    };
+  }
+
+  public drawPlaceholder(ctx: CanvasRenderingContext2D) {
+    ctx.save();
+    ctx.translate(-this.width / 4, -this.height / 2);
+
+    if (this.imageLoaded && this.placeholderImage) {
+      // Draw image with fixed width/height matching red box dimensions
+      const drawWidth = this.width / 2; // Same as red box width
+      const drawHeight = this.height / 4; // Fixed height at half of red box height
+
+      // Calculate source crop to maintain aspect ratio while fitting
+      const srcAspect =
+        this.placeholderImage.height / this.placeholderImage.width;
+      const targetAspect = drawHeight / drawWidth;
+
+      let sx = 0,
+        sy = 0,
+        sw = this.placeholderImage.width,
+        sh = this.placeholderImage.height;
+
+      if (srcAspect > targetAspect) {
+        // Source is taller - crop top/bottom
+        sh = this.placeholderImage.width * targetAspect;
+        sy = (this.placeholderImage.height - sh) / 2;
+      } else {
+        // Source is wider - crop left/right
+        sw = this.placeholderImage.height / targetAspect;
+        sx = (this.placeholderImage.width - sw) / 2;
+      }
+
+      ctx.drawImage(
+        this.placeholderImage,
+        sx,
+        sy,
+        sw,
+        sh, // Source crop
+        -drawWidth / 2,
+        -drawHeight / 2, // Destination position
+        drawWidth,
+        drawHeight // Destination size
+      );
+    } else {
+      // Fallback red rectangle
+      ctx.fillStyle = "#ff0000";
+      ctx.fillRect(
+        -this.width / 4,
+        -this.height / 4,
+        this.width / 2,
+        this.height / 2
+      );
+    }
+
+    ctx.restore();
   }
 
   public drawTextIdentity(ctx: CanvasRenderingContext2D) {
@@ -24,7 +92,7 @@ class Video extends VideoBase {
     ctx.fillStyle = "#f4f4f5";
     ctx.textAlign = "left";
     ctx.clip();
-    ctx.fillText("Video", 36, 10);
+    ctx.fillText("TEST_VIDEO", 36, 10);
 
     ctx.translate(8, 1);
 
