@@ -50,6 +50,9 @@ importers:
       lucide-react:
         specifier: ^0.427.0
         version: 0.427.0(react@18.3.1)
+      mp4box:
+        specifier: ^1.4.4
+        version: 1.4.4
       opfs-tools:
         specifier: ^0.6.1
         version: 0.6.1
@@ -1671,6 +1674,10 @@ packages:
     resolution: {integrity: sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==}
     engines: {node: '>=10'}
     hasBin: true
+
+  mp4box@1.4.4:
+    resolution: {integrity: sha512-rFMnBBRCHLEWTYvC7jQ8d2m2wg/ECRgfGo39fGqNvGRiw/KPIchwQYMnYnmgSu35dd5oxizicy1Xvo8rjFGvNQ==}
+    engines: {node: '>=20.8.1'}
 
   ms@2.1.2:
     resolution: {integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==}
@@ -3908,6 +3915,8 @@ snapshots:
 
   mkdirp@1.0.4:
     optional: true
+
+  mp4box@1.4.4: {}
 
   ms@2.1.2: {}
 
