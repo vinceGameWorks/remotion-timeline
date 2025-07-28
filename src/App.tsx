@@ -3,7 +3,7 @@ import {
   ADD_IMAGE,
   ADD_TEXT,
   ADD_VIDEO,
-  dispatch
+  dispatch,
 } from "@designcombo/events";
 import { Button } from "./components/ui/button";
 import { useRef } from "react";
@@ -30,16 +30,16 @@ const App = () => {
         id: resourceId,
         display: {
           from: 2000,
-          to: 7000
+          to: 7000,
         },
         details: {
           src: URL.createObjectURL(files[0]),
-          name: files[0].name
+          name: files[0].name,
         },
         metadata: {
-          resourceId
-        }
-      }
+          resourceId,
+        },
+      },
     });
   };
 
@@ -52,9 +52,9 @@ const App = () => {
       payload: {
         id: generateId(),
         details: {
-          src: "https://designcombo.imgix.net/images/sample-image.jpg"
-        }
-      }
+          src: "https://designcombo.imgix.net/images/sample-image.jpg",
+        },
+      },
     });
   };
 
@@ -65,12 +65,12 @@ const App = () => {
         id: generateId(),
         details: {
           src: "https://designcombo.imgix.net/videos/sample-video.mp4",
-          volume: 50
+          volume: 50,
         },
         metadata: {
-          resourceId
-        }
-      }
+          resourceId,
+        },
+      },
     });
   };
   const handleAddAudio = () => {
@@ -79,9 +79,9 @@ const App = () => {
         id: generateId(),
         details: {
           src: "https://designcombo.imgix.net/audios/stop-in-the-name-of-love.mp3",
-          volume: 50
-        }
-      }
+          volume: 50,
+        },
+      },
     });
   };
 
@@ -97,9 +97,9 @@ const App = () => {
           width: 400,
           textAlign: "left",
           color: "#ffffff",
-          left: 80
-        }
-      }
+          left: 80,
+        },
+      },
     });
   };
 
@@ -109,7 +109,7 @@ const App = () => {
 
   return (
     <div className=" flex flex-col h-screen">
-      <div className="absolute top-4 right-4  gap-4 items-center flex text-zinc-400 italic">
+      {/* <div className="absolute top-4 right-4  gap-4 items-center flex text-zinc-400 italic">
         Join our discord
         <Button
           className="border border-white/10 flex gap-2  h-8"
@@ -129,7 +129,7 @@ const App = () => {
           </svg>
           Discord
         </Button>
-      </div>
+      </div> */}
       <div className=" bg-background flex-1 flex flex-col items-center justify-center">
         <div className="max-w-3xl flex-1  w-full h-full flex">
           <Player />

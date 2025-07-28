@@ -4,7 +4,7 @@ import {
   ACTIVE_DELETE,
   ACTIVE_SPLIT,
   TIMELINE_SCALE_CHANGED,
-  dispatch
+  dispatch,
 } from "@designcombo/events";
 import { frameToTimeString, getCurrentTime, timeToString } from "@/utils/time";
 import useStore from "@/store/store";
@@ -13,7 +13,7 @@ import {
   SquareSplitHorizontal,
   Trash,
   ZoomIn,
-  ZoomOut
+  ZoomOut,
 } from "lucide-react";
 import { getNextZoomLevel, getPreviousZoomLevel } from "@/utils/timeline";
 import { useCurrentPlayerFrame } from "@/hooks/use-current-frame";
@@ -26,8 +26,8 @@ const Header = () => {
     const previousZoom = getPreviousZoomLevel(scale);
     dispatch(TIMELINE_SCALE_CHANGED, {
       payload: {
-        scale: previousZoom
-      }
+        scale: previousZoom,
+      },
     });
   };
 
@@ -36,8 +36,8 @@ const Header = () => {
 
     dispatch(TIMELINE_SCALE_CHANGED, {
       payload: {
-        scale: nextZoom
-      }
+        scale: nextZoom,
+      },
     });
   };
 
@@ -53,8 +53,8 @@ const Header = () => {
     dispatch(ACTIVE_SPLIT, {
       payload: {},
       options: {
-        time: getCurrentTime()
-      }
+        time: getCurrentTime(),
+      },
     });
   };
 
@@ -64,14 +64,14 @@ const Header = () => {
         position: "relative",
         height: "50px",
         boxShadow: "inset 0 1px 0 0 #27272a",
-        flex: "none"
+        flex: "none",
       }}
     >
       <div
         style={{
           position: "absolute",
           height: 50,
-          width: "100%"
+          width: "100%",
         }}
       >
         <div
@@ -80,11 +80,11 @@ const Header = () => {
             width: "100%",
             display: "grid",
             gridTemplateColumns: "1fr 200px 1fr",
-            alignItems: "center"
+            alignItems: "center",
           }}
         >
           <div className="px-4">
-            <Button
+            {/* <Button
               disabled={!activeIds.length}
               onClick={doActiveDelete}
               variant={"ghost"}
@@ -107,7 +107,7 @@ const Header = () => {
               size={"icon"}
             >
               <SquareSplitHorizontal size={18} />
-            </Button>
+            </Button> */}
           </div>
           <div
             className="text-sm font-light "
@@ -116,14 +116,14 @@ const Header = () => {
               alignItems: "center",
               gridTemplateColumns: "72px 8px 72px",
               paddingTop: "2px",
-              justifyContent: "center"
+              justifyContent: "center",
             }}
           >
             <div
               className="text-zinc-200 font-medium"
               style={{
                 display: "flex",
-                justifyContent: "center"
+                justifyContent: "center",
               }}
               data-current-time={currentFrame / fps}
               id="video-current-time"
@@ -135,7 +135,7 @@ const Header = () => {
               className="text-zinc-600"
               style={{
                 display: "flex",
-                justifyContent: "center"
+                justifyContent: "center",
               }}
             >
               {timeToString({ time: duration })}
