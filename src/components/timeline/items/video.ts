@@ -18,17 +18,20 @@ class Video extends VideoBase {
       console.log({ frame, frames });
     });
 
+    // Chart configuration
+    const X_RANGE = 300;
+    const Y_RANGE = 900;
+    const POINT_COUNT = 30;
+    const Y_VARIATION = 180; // +/- variation
+
     // Generate fixed chart points with proper line chart shape
-    this.chartPoints = Array.from({ length: 20 }, (_, i) => {
-      const x = (300 / 19) * i; // Evenly spaced x from 0-300
+    this.chartPoints = Array.from({ length: POINT_COUNT }, (_, i) => {
+      const x = (X_RANGE / (POINT_COUNT - 1)) * i; // Evenly spaced x
       // Create trending y values with some variation
-      const baseY = 900 * (i / 19);
+      const baseY = Y_RANGE * (i / (POINT_COUNT - 1));
       const y = Math.min(
-        900,
-        Math.max(
-          0,
-          baseY + (Math.random() * 180 - 100) // +/- 90 variation
-        )
+        Y_RANGE,
+        Math.max(0, baseY + (Math.random() * Y_VARIATION * 2 - Y_VARIATION))
       );
       return { x, y };
     });

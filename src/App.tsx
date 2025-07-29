@@ -13,6 +13,7 @@ import { DEFAULT_FONT } from "./constants/font";
 import { Player } from "./components/player";
 import useStore from "./store/store";
 import useTimelineEvents from "./hooks/use-timeline-events";
+import { FrameBuffer } from "./utils/frameBuffer";
 
 const App = () => {
   const { playerRef } = useStore();
@@ -34,7 +35,11 @@ const App = () => {
     worker.postMessage({ dataUri: videoUrl });
 
     worker.onmessage = (e) => {
-      console.log({ e });
+      if (e.data.type === "frame") {
+        console.log({ e });
+        FrameBuffer.add(e.data);
+        useMp4FramesStore.getState().addFrame(e.data);
+      }
       if (e.data.status === "error") {
         console.error("Worker error:", e.data.error);
         worker.terminate();
@@ -157,7 +162,15 @@ const App = () => {
         </div>
       </div>
 
-      {playerRef && <Timeline />}
+      {playerRef && (
+        // <div style={{ height: 500 }}>
+        <Timeline />
+        // </div>
+      )}
+
+      {/* <div style={{ backgroundColor: "red", height: 500 }}>
+        <LineChart />
+      </div> */}
     </div>
   );
 };

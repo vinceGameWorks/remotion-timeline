@@ -3,26 +3,27 @@ import Header from "./header";
 import Ruler from "./ruler";
 import CanvasTimeline, {
   timeMsToUnits,
-  unitsToTimeMs
+  unitsToTimeMs,
 } from "@designcombo/timeline";
 import * as ScrollArea from "@radix-ui/react-scroll-area";
 import {
   TIMELINE_BOUNDING_CHANGED,
   TIMELINE_PREFIX,
   filter,
-  subject
+  subject,
 } from "@designcombo/events";
 import useStore from "@/store/store";
 import { handleEvents } from "@designcombo/timeline";
 import Playhead from "./playhead";
 import { useCurrentPlayerFrame } from "@/hooks/use-current-frame";
 import { Audio, Image, Text, Video } from "./items";
+import { FrameBuffer } from "@/utils/frameBuffer";
 
 CanvasTimeline.registerItems({
   Text,
   Image,
   Audio,
-  Video
+  Video,
 });
 
 const Timeline = () => {
@@ -38,7 +39,7 @@ const Timeline = () => {
 
   const [size, setSize] = useState<{ width: number; height: number }>({
     width: 0,
-    height: 0
+    height: 0,
   });
 
   const { setTimeline } = useStore();
@@ -55,6 +56,10 @@ const Timeline = () => {
     const canvasBoudingX =
       canvasElRef.current?.getBoundingClientRect().x! +
       canvasElRef.current?.clientWidth!;
+
+    // canvasRef.current?.requestRenderAll();
+    // canvasRef.current?.updateTracksState();
+    // canvasRef.current?.renderAndReset();
     const playHeadPos = position - scrollLeft + 40;
     if (playHeadPos >= canvasBoudingX) {
       const scrollDivWidth = horizontalScrollbarVpRef.current?.clientWidth!;
@@ -66,13 +71,16 @@ const Timeline = () => {
       if (scaleScroll >= 0) {
         if (scaleScroll > 1)
           horizontalScrollbarVpRef.current?.scrollTo({
-            left: currentPosScroll + scrollDivWidth
+            left: currentPosScroll + scrollDivWidth,
           });
         else
           horizontalScrollbarVpRef.current?.scrollTo({
-            left: totalScrollWidth - scrollDivWidth
+            left: totalScrollWidth - scrollDivWidth,
           });
       }
+      // canvasRef.current?.updateState();
+
+      // canvasRef.current?._renderObjects()
     }
   }, [currentFrame]);
 
@@ -89,13 +97,13 @@ const Timeline = () => {
       height: containerHeight,
       bounding: {
         width: containerWidth,
-        height: 0
+        height: 0,
       },
       selectionColor: "rgba(0, 216, 214,0.1)",
       selectionBorderColor: "rgba(0, 216, 214,1.0)",
       onScroll,
       tScale: scale.zoom,
-      store
+      store,
     });
 
     const eventsHandler = handleEvents(canvas);
@@ -104,9 +112,15 @@ const Timeline = () => {
 
     setSize({
       width: containerWidth,
-      height: 0
+      height: 0,
     });
     setTimeline(canvas);
+
+    FrameBuffer.subscribe(() => {
+      canvasRef.current?.renderAll();
+      // this.currentFrame = frame.data;
+      // console.log({ frame });
+    });
 
     return () => {
       eventsHandler.unsubscribe();
@@ -138,7 +152,7 @@ const Timeline = () => {
         if (bounding) {
           setSize({
             width: bounding.width,
-            height: bounding.height
+            height: bounding.height,
           });
         }
       }
@@ -166,7 +180,7 @@ const Timeline = () => {
         <div className="relative h-60 flex-1 ">
           <div
             ref={containerRef}
-            className="text-white text-sm h-60 absolute top-0 w-full "
+            className="text-white text-sm h-full absolute top-0 w-full "
           >
             <canvas ref={canvasElRef} />
           </div>
@@ -175,7 +189,7 @@ const Timeline = () => {
             style={{
               position: "absolute",
               width: "calc(100vw - 40px)",
-              height: "10px"
+              height: "10px",
             }}
             className="ScrollAreaRootH"
           >
@@ -187,7 +201,7 @@ const Timeline = () => {
             >
               <div
                 style={{
-                  width: size.width
+                  width: size.width,
                 }}
                 className="pointer-events-none  h-[10px]"
               ></div>
@@ -206,7 +220,7 @@ const Timeline = () => {
             style={{
               position: "absolute",
               height: "240px",
-              width: "10px"
+              width: "10px",
             }}
             className="ScrollAreaRootV"
           >
@@ -217,7 +231,7 @@ const Timeline = () => {
             >
               <div
                 style={{
-                  height: size.height
+                  height: size.height,
                 }}
                 className="pointer-events-none  w-[10px]"
               ></div>
