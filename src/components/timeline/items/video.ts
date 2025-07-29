@@ -1,20 +1,110 @@
+import { FrameData } from "@/store/mp4FramesStore";
+import { FrameBuffer } from "@/utils/frameBuffer";
 import { Video as VideoBase, VideoProps } from "@designcombo/timeline";
+// import type { FrameData } from "@/store/mp4FramesStore";
 
 class Video extends VideoBase {
   private placeholderImage: HTMLImageElement | null = null;
   private imageLoaded = false;
   static type = "Video";
+
+  private currentFrames: FrameData[] | null = null;
+  private chartPoints: { x: number; y: number }[] = [];
+
   constructor(props: VideoProps) {
     super(props);
-    // this.fill = "#2563eb";
-    this.loadPlaceholderImage();
+    FrameBuffer.subscribe((frame, frames) => {
+      this.currentFrames = frames;
+      console.log({ frame, frames });
+    });
+
+    // Generate fixed chart points with proper line chart shape
+    this.chartPoints = Array.from({ length: 20 }, (_, i) => {
+      const x = (300 / 19) * i; // Evenly spaced x from 0-300
+      // Create trending y values with some variation
+      const baseY = 900 * (i / 19);
+      const y = Math.min(
+        900,
+        Math.max(
+          0,
+          baseY + (Math.random() * 180 - 100) // +/- 90 variation
+        )
+      );
+      return { x, y };
+    });
   }
 
   public _render(ctx: CanvasRenderingContext2D) {
+    console.log("render");
     super._render(ctx);
-    this.drawPlaceholder(ctx);
+    // this.drawPlaceholder(ctx);
+    this.drawChart(ctx);
     this.drawTextIdentity(ctx);
     this.updateSelected(ctx);
+    this.drawFrameSquare(ctx);
+  }
+
+  private drawChart(ctx: CanvasRenderingContext2D) {
+    ctx.save();
+    const drawHeight = this.height * 1.5;
+    ctx.translate(-this.width / 2, drawHeight * 1.5);
+
+    // Map points (x:0-300 to 0:width, y:0-900 to 0:drawHeight)
+    const mappedPoints = this.chartPoints.map((p) => ({
+      x: (p.x / 300) * this.width,
+      y: (p.y / 900) * drawHeight,
+    }));
+
+    // Draw line graph
+    ctx.beginPath();
+    ctx.strokeStyle = "#00ff00";
+    ctx.lineWidth = 2;
+
+    mappedPoints.forEach((p, i) => {
+      if (i === 0) {
+        ctx.moveTo(p.x, p.y);
+      } else {
+        ctx.lineTo(p.x, p.y);
+      }
+    });
+    ctx.stroke();
+
+    // Draw points
+    ctx.fillStyle = "#ffffff";
+    mappedPoints.forEach((p) => {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    ctx.restore();
+  }
+
+  private drawFrameSquare(ctx: CanvasRenderingContext2D) {
+    if (this.currentFrames && this.currentFrames.length > 0) {
+      ctx.save();
+
+      const totalWidth = this.width;
+      const frameWidth = totalWidth / this.currentFrames.length;
+      // const targetHeight = this.height / 2;
+
+      this.currentFrames.forEach((frameData, i) => {
+        const frame = frameData.data;
+        // const frameAspect = frame.height / frame.width;
+
+        // Calculate dimensions maintaining aspect ratio
+        const drawWidth = frameWidth;
+        const drawHeight = this.height * 1.5;
+        // const offsetY = (targetHeight - drawHeight) / 2;
+
+        // Calculate x position (left-aligned for each frame)
+        const xPos = -totalWidth / 2 + i * frameWidth;
+
+        ctx.drawImage(frame, xPos, -drawHeight * 0.5, drawWidth, drawHeight);
+      });
+
+      ctx.restore();
+    }
   }
 
   private loadPlaceholderImage() {
