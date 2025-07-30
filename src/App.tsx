@@ -38,7 +38,7 @@ const App = () => {
       if (e.data.type === "frame") {
         console.log({ e });
         FrameBuffer.add(e.data);
-        useMp4FramesStore.getState().addFrame(e.data);
+        // useMp4FramesStore.getState().addFrame(e.data);
       }
       if (e.data.status === "error") {
         console.error("Worker error:", e.data.error);
@@ -64,6 +64,15 @@ const App = () => {
         },
         metadata: {
           resourceId,
+        },
+      },
+    });
+
+    dispatch(ADD_IMAGE, {
+      payload: {
+        id: generateId(),
+        details: {
+          src: "https://designcombo.imgix.net/images/sample-image.jpg",
         },
       },
     });
